@@ -1,0 +1,292 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+body {
+    background: #030303;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* LIVE MATRIX BACKGROUND */
+.matrix-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(30, 0, 0, 0.4) 0%, rgba(3, 3, 3, 0.95) 80%);
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.matrix-bg::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background-image: radial-gradient(#ff1a1a 1.5px, transparent 1.5px);
+    background-size: 35px 35px;
+    opacity: 0.35;
+    animation: matrixMove 20s linear infinite;
+}
+
+@keyframes matrixMove {
+    0% { transform: translateY(0) translateX(0) rotate(0deg); }
+    50% { transform: translateY(30px) translateX(-30px) rotate(1deg); }
+    100% { transform: translateY(0) translateX(0) rotate(0deg); }
+}
+
+/* IDM Main Window */
+.idm-window {
+    width: 100%;
+    max-width: 860px;
+    background: rgba(10, 10, 10, 0.94);
+    border: 1px solid #4d0000;
+    box-shadow: 0 0 35px rgba(255, 0, 0, 0.35);
+    border-radius: 6px;
+    overflow: hidden;
+    z-index: 1;
+    position: relative;
+    backdrop-filter: blur(12px);
+}
+
+.title-bar {
+    background: linear-gradient(90deg, #1f0000, #0a0a0a);
+    color: #ffcccc;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #660000;
+}
+
+.title-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.madara-logo-badge {
+    background: #ff1a1a;
+    color: #ffffff;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255, 26, 26, 0.9);
+    animation: logoGlow 2s infinite alternate;
+}
+
+@keyframes logoGlow {
+    from { box-shadow: 0 0 5px rgba(255, 26, 26, 0.5); }
+    to { box-shadow: 0 0 15px rgba(255, 26, 26, 1); }
+}
+
+.win-btn {
+    background: #260000;
+    border: 1px solid #660000;
+    color: #ff9999;
+    width: 24px;
+    height: 22px;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.win-btn:hover {
+    background: #ff1a1a;
+    color: white;
+}
+
+.toolbar {
+    background: #0d0202;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #260000;
+    overflow-x: auto;
+}
+
+.tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 9px;
+    gap: 2px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: #cccccc;
+    min-width: 55px;
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+
+.tool-btn:hover {
+    background: #260505;
+    border: 1px solid #4d0d0d;
+}
+
+.tool-btn i {
+    font-size: 14px;
+}
+
+.address-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #0d0202;
+    border-bottom: 1px solid #260000;
+    font-size: 11px;
+    color: #b3b3b3;
+}
+
+.address-bar label {
+    font-weight: bold;
+    color: #ff4d4d;
+}
+
+.address-bar input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #4d0000;
+    font-size: 11px;
+    background: #020202;
+    color: #ff6666;
+    border-radius: 3px;
+    min-width: 0;
+}
+
+.address-bar input::placeholder {
+    color: #701010;
+}
+
+.preview-btn {
+    padding: 6px 14px;
+    background: #cc0000;
+    border: 1px solid #ff1a1a;
+    cursor: pointer;
+    font-size: 11px;
+    color: #fff;
+    border-radius: 3px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.preview-btn:hover {
+    background: #ff1a1a;
+    box-shadow: 0 0 10px rgba(255, 26, 26, 0.8);
+}
+
+/* TABLE CONTAINER & GLOWING ANIMATED WATERMARK TEXT */
+.table-container {
+    height: 190px;
+    background: #020202;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-bottom: 1px solid #260000;
+    position: relative;
+}
+
+/* Oya Illapu Thanata Damu Pulsing Glowing Animation */
+.center-watermark-animation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.glow-text-madara {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: rgba(255, 26, 26, 0.25);
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
+    animation: textPulseGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes textPulseGlow {
+    0% {
+        opacity: 0.15;
+        text-shadow: 0 0 5px rgba(255, 0, 0, 0.1);
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 0.55;
+        text-shadow: 0 0 20px rgba(255, 26, 26, 0.8), 0 0 40px rgba(255, 0, 0, 0.4);
+        transform: scale(1.05);
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    text-align: left;
+    min-width: 450px;
+    position: relative;
+    z-index: 10;
+}
+
+th {
+    background: rgba(18, 2, 2, 0.9);
+    border-bottom: 1px solid #330000;
+    padding: 6px 10px;
+    font-weight: bold;
+    color: #ff8080;
+    position: sticky;
+    top: 0;
+}
+
+td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #080202;
+    color: #e6e6e6;
+}
+
+tr:hover {
+    background: rgba(25, 5, 5, 0.8);
+}
+
+.status-complete { color: #ff1a1a; font-weight: bold; }
+.status-downloading { color: #ff4d4d; font-weight: bold; }
+
+.status-bar {
+    background: #080202;
+    padding: 6px 12px;
+    font-size: 10px;
+    color: #8c8c8c;
+}
+
+@media (max-width: 768px) {
+    .pc-only {
+        display: none !important;
+    }
+}

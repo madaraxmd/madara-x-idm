@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madara X IDM | Desktop App</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: #030303;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* LIVE MATRIX BACKGROUND */
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(35, 0, 0, 0.45) 0%, rgba(3, 3, 3, 0.98) 85%);
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .matrix-bg::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image: radial-gradient(#ff1a1a 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+            opacity: 0.4;
+            animation: matrixMove 18s linear infinite;
+        }
+
+        @keyframes matrixMove {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); }
+            50% { transform: translateY(35px) translateX(-35px) rotate(1deg); }
+            100% { transform: translateY(0) translateX(0) rotate(0deg); }
+        }
+
+        /* IDM Main Window */
+        .idm-window {
+            width: 100%;
+            max-width: 860px;
+            background: rgba(12, 12, 12, 0.95);
+            border: 1px solid #550000;
+            box-shadow: 0 0 35px rgba(255, 0, 0, 0.35);
+            border-radius: 6px;
+            overflow: hidden;
+            z-index: 1;
+            position: relative;
+            backdrop-filter: blur(12px);
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(90deg, #240000, #0a0a0a);
+            color: #ffcccc;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #660000;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .madara-logo-badge {
+            background: #ff1a1a;
+            color: #ffffff;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(255, 26, 26, 0.9);
+            animation: logoGlow 2s infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            from { box-shadow: 0 0 5px rgba(255, 26, 26, 0.5); }
+            to { box-shadow: 0 0 15px rgba(255, 26, 26, 1); }
+        }
+
+        .win-btn {
+            background: #2b0000;
+            border: 1px solid #770000;
+            color: #ff9999;
+            width: 24px;
+            height: 22px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .win-btn:hover {
+            background: #ff1a1a;
+            color: white;
+        }
+
+        /* Toolbar - FIXED HORIZONTAL ROW (ବଟන් එක උඩ එක වැටීම සම්පූර්ණයෙන්ම නිවැරදි කර ඇත) */
+        .toolbar {
+            background: #0d0202;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #2b0000;
+            overflow-x: auto;
+        }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            gap: 4px;
+            padding: 5px 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #e0e0e0;
+            min-width: 55px;
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: #260505;
+            border: 1px solid #550d0d;
+        }
+
+        .tool-btn i {
+            font-size: 15px;
+        }
+
+        /* Address Bar */
+        .address-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #0f0303;
+            border-bottom: 1px solid #2b0000;
+            font-size: 12px;
+        }
+
+        .address-bar label {
+            font-weight: bold;
+            color: #ff4d4d;
+        }
+
+        .address-bar input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #550000;
+            font-size: 11px;
+            background: #050505;
+            color: #ff6666;
+            border-radius: 3px;
+            min-width: 0;
+            outline: none;
+        }
+
+        .address-bar input::placeholder {
+            color: #772222;
+        }
+
+        .preview-btn {
+            padding: 6px 14px;
+            background: #cc0000;
+            border: 1px solid #ff1a1a;
+            cursor: pointer;
+            font-size: 11px;
+            color: #ffffff;
+            border-radius: 3px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .preview-btn:hover {
+            background: #ff1a1a;
+            box-shadow: 0 0 10px rgba(255, 26, 26, 0.8);
+        }
+
+        /* Table Container & Single-Line Center Watermark */
+        .table-container {
+            height: 200px;
+            background: #030303;
+            overflow-y: auto;
+            overflow-x: auto;
+            border-bottom: 1px solid #2b0000;
+            position: relative;
+        }
+
+        .center-watermark-animation {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            pointer-events: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .glow-text-madara {
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            white-space: nowrap; /* වචන කැඩී යාම වළක්වයි */
+            color: rgba(255, 26, 26, 0.28);
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+            animation: textPulseGlow 2.2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textPulseGlow {
+            0% {
+                opacity: 0.15;
+                text-shadow: 0 0 5px rgba(255, 0, 0, 0.1);
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 0.65;
+                text-shadow: 0 0 20px rgba(255, 26, 26, 0.9), 0 0 40px rgba(255, 0, 0, 0.5);
+                transform: scale(1.05);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: left;
+            min-width: 440px;
+            position: relative;
+            z-index: 5;
+        }
+
+        th {
+            background: rgba(20, 2, 2, 0.95);
+            border-bottom: 1px solid #3d0000;
+            padding: 6px 10px;
+            font-weight: bold;
+            color: #ff8080;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #120202;
+            color: #f0f0f0;
+        }
+
+        tr:hover {
+            background: rgba(35, 5, 5, 0.8);
+        }
+
+        .status-complete { color: #ff1a1a; font-weight: bold; }
+        .status-downloading { color: #ff4d4d; font-weight: bold; }
+
+        /* Status Bar */
+        .status-bar {
+            background: #0a0202;
+            padding: 6px 12px;
+            font-size: 10px;
+            color: #999999;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .pc-only {
+                display: none !important;
+            }
+            .glow-text-madara {
+                font-size: 17px;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LIVE MATRIX BACKGROUND -->
+    <div class="matrix-bg"></div>
+
+    <!-- IDM Main Window -->
+    <div class="idm-window" id="idmWindow">
+        
+        <!-- Title Bar -->
+        <div class="title-bar" id="titleBar">
+            <div class="title-left">
+                <div class="madara-logo-badge">M</div>
+                <span class="title-text">Madara X IDM // Desktop Edition v6.42</span>
+            </div>
+            <div class="title-controls">
+                <button class="win-btn" onclick="closeApp()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+
+        <!-- Toolbar Buttons -->
+        <div class="toolbar">
+            <div class="tool-btn" onclick="addUrlPrompt()"><i class="fa-solid fa-file-arrow-down" style="color: #ff1a1a;"></i><span>Add URL</span></div>
+            <div class="tool-btn" onclick="btnAction('Resume')"><i class="fa-solid fa-play" style="color: #ff1a1a;"></i><span>Resume</span></div>
+            <div class="tool-btn" onclick="btnAction('Pause')"><i class="fa-solid fa-pause" style="color: #ff6666;"></i><span>Pause</span></div>
+            <div class="tool-btn pc-only" onclick="btnAction('Speed Limiter')"><i class="fa-solid fa-gauge-high" style="color: #ff4d4d;"></i><span>Limiter</span></div>
+            <div class="tool-btn pc-only" onclick="btnAction('Batch Download')"><i class="fa-solid fa-layer-group" style="color: #ff3333;"></i><span>Batch</span></div>
+            <div class="tool-btn pc-only" onclick="btnAction('Site Grabber')"><i class="fa-solid fa-globe" style="color: #ff1a1a;"></i><span>Grabber</span></div>
+            <div class="tool-btn" onclick="btnAction('Stop')"><i class="fa-solid fa-xmark" style="color: #cc0000;"></i><span>Stop</span></div>
+            <div class="tool-btn" onclick="bugFixDelete()"><i class="fa-solid fa-trash" style="color: #e53e3e;"></i><span>Delete</span></div>
+        </div>
+
+        <!-- Address Bar (URL Input) -->
+        <div class="address-bar">
+            <label>URL:</label>
+            <input type="text" id="urlInput" placeholder="Enter file or YouTube link here...">
+            <button class="preview-btn" onclick="startDownloadEngine()">Download</button>
+        </div>
+
+        <!-- Downloads Table / List with Single-Line Glowing Animated Text -->
+        <div class="table-container">
+            
+            <div class="center-watermark-animation">
+                <span class="glow-text-madara">MADARA X IDM</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>File Description</th>
+                        <th>Size</th>
+                        <th>Status</th>
+                        <th>Speed</th>
+                    </tr>
+                </thead>
+                <tbody id="downloadTableBody">
+                    <tr>
+                        <td><i class="fa-solid fa-file-zipper" style="color: #ff1a1a;"></i> Madara_XMD_Core.zip</td>
+                        <td>88.4 MB</td>
+                        <td class="status-complete">Complete (16/16)</td>
+                        <td>--</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>Engine: 16-Threads Turbo Active | Creator: Menula Oshada</span>
+        </div>
+
+    </div>
+
+    <script>
+        function addUrlPrompt() {
+            let url = prompt("Enter URL to download (File or YouTube):", "https://");
+            if(url) {
+                document.getElementById('urlInput').value = url;
+                startDownloadEngine();
+            }
+        }
+
+        function btnAction(actionName) {
+            alert("Madara X IDM Action: " + actionName + " executed successfully.");
+        }
+
+        function bugFixDelete() {
+            alert("Madara X IDM Action: Delete executed successfully.");
+        }
+
+        function startDownloadEngine() {
+            let urlInput = document.getElementById('urlInput');
+            let url = urlInput.value.trim();
+
+            if(url === "") {
+                alert("Please enter a valid URL in the Address box first!");
+                return;
+            }
+
+            let fileName = "Madara_Download_File.dat";
+            let fileIcon = "fa-file-arrow-down";
+
+            if(url.includes("youtube.com") || url.includes("youtu.be")) {
+                fileName = "YouTube_Video_Stream_1080p.mp4";
+                fileIcon = "fa-file-video";
+            } else {
+                let parts = url.split('/');
+                let lastPart = parts[parts.length - 1];
+                if(lastPart && lastPart.includes('.')) {
+                    fileName = lastPart.split('?')[0];
+                }
+                if(fileName.endsWith('.zip')) fileIcon = "fa-file-zipper";
+                else if(fileName.endsWith('.mp4')) fileIcon = "fa-file-video";
+                else if(fileName.endsWith('.mp3')) fileIcon = "fa-file-audio";
+            }
+
+            let tableBody = document.getElementById('downloadTableBody');
+            let newRow = document.createElement('tr');
+            
+            let progress = 0;
+            let uniqueId = Date.now();
+            
+            newRow.innerHTML = `
+                <td><i class="fa-solid ${fileIcon}" style="color: #ff1a1a;"></i> ${fileName}</td>
+                <td>35.4 MB</td>
+                <td class="status-downloading" id="status-${uniqueId}">Connecting (16 Threads)...</td>
+                <td id="speed-${uniqueId}">14.5 MB/s</td>
+            `;
+            
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+            urlInput.value = "";
+
+            let downloadInterval = setInterval(() => {
+                progress += 10;
+                let statusEl = document.getElementById(`status-${uniqueId}`);
+                let speedEl = document.getElementById(`speed-${uniqueId}`);
+                
+                if(progress <= 100) {
+                    if(statusEl) statusEl.innerText = `Downloading (${progress}% - 16/16 parts)`;
+                    if(speedEl) speedEl.innerText = (12 + Math.random() * 8).toFixed(1) + " MB/s (Turbo)";
+                } else {
+                    if(statusEl) {
+                        statusEl.innerText = "Complete (16/16)";
+                        statusEl.className = "status-complete";
+                    }
+                    if(speedEl) speedEl.innerText = "--";
+                    clearInterval(downloadInterval);
+                }
+            }, 250);
+
+            alert("Madara X IDM started turbo download with 16 split connections!");
+        }
+
+        function closeApp() {
+            if(confirm("Do you want to close Madara X IDM?")) {
+                alert("Application closed.");
+            }
+        }
+    </script>
+</body>
+</html>
